@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бауыржан Момышұлы "Ұшқан ұя"</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Oswald:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom Cinematic Styles */
+        :root {
+            --gold: #d4af37;
+            --dark-bg: #0a0a0a;
+            --panel-bg: rgba(20, 20, 20, 0.85);
+        }
+        
+        body {
+            font-family: 'Merriweather', serif;
+            background-color: var(--dark-bg);
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .cinematic-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        .oswald-font {
+            font-family: 'Oswald', sans-serif;
+        }
+
+        /* Animations */
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 1s ease-out forwards;
+        }
+
+        /* Ticker Tape */
+        .ticker-wrap {
+            position: fixed;
+            bottom: 40px;
+            width: 100%;
+            overflow: hidden;
+            height: 3rem;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid var(--gold);
+            border-bottom: 1px solid var(--gold);
+            z-index: 40;
+            display: flex;
+            align-items: center;
+        }
+
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            padding-right: 100%;
+            animation: ticker 35s linear infinite;
+        }
+
+        .ticker__item {
+            display: inline-block;
+            padding: 0 2rem;
+            font-size: 1.2rem;
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Futuristic Panels */
+        .panel-container {
+            display: flex;
+            gap: 1rem;
+            height: 70vh; /* Increased height for better visibility */
+            width: 100%;
+            transition: all 0.5s ease;
+        }
+
+        .panel {
+            flex: 1;
+            background: linear-gradient(180deg, rgba(30,30,30,0.9) 0%, rgba(10,10,10,0.95) 100%);
+            border: 1px solid #333;
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex; /* Flex layout to manage content/title positioning */
+            flex-direction: column;
+        }
+
+        .panel.active {
+            flex: 6; /* Give even more space to active panel */
+            border-color: var(--gold);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+            cursor: default;
+        }
+
+        .panel-content {
+            opacity: 0;
+            transition: opacity 0.4s ease-in 0.2s; /* Delay ensures it appears after expansion */
+            padding: 2rem;
+            height: 100%;
+            overflow-y: auto;
+            min-width: 400px; /* CRITICAL: Prevents text wrapping/squashing during animation */
+            display: none; /* Hide completely when not active to prevent layout issues */
+        }
+
+        .panel.active .panel-content {
+            opacity: 1;
+            display: block;
+        }
+
+        /* Title Styles */
+        .panel-title {
+            font-weight: bold;
+            color: white;
+            transition: all 0.5s;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        /* Active Title Style */
+        .panel.active .panel-title {
+            position: relative;
+            font-size: 1.8rem;
+            color: var(--gold);
+            border-bottom: 1px solid var(--gold);
+            padding: 1.5rem 2rem 0.5rem 2rem;
+            width: 100%;
+            text-align: left;
+        }
+
+        /* Inactive Title Style - Vertical Centered */
+        .panel:not(.active) .panel-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            font-size: 1.4rem;
+            width: 60vh; /* Ensure container is long enough for text */
+            text-align: center;
+            letter-spacing: 2px;
+            pointer-events: none; /* Let clicks pass through to panel */
+        }
+
+        /* Navigation */
+        .nav-btn {
+            position: relative;
+            overflow: hidden;
+            text-transform: none; 
+        }
+        .nav-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s;
+        }
+        .nav-btn:hover::after, .nav-btn.active::after {
+            width: 100%;
+        }
+
+        /* Quiz Styles */
+        .quiz-card {
+            background: rgba(25, 25, 25, 0.9);
+            border: 1px solid #444;
+            transition: transform 0.2s;
+        }
+        .quiz-card:hover {
+            transform: scale(1.01);
+        }
+        .option-btn {
+            transition: all 0.3s;
+        }
+        .option-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .correct {
+            background-color: rgba(34, 197, 94, 0.2) !important;
+            border-color: #22c55e !important;
+            color: #22c55e;
+        }
+        .incorrect {
+            background-color: rgba(239, 68, 68, 0.2) !important;
+            border-color: #ef4444 !important;
+            color: #ef4444;
+        }
+        
+        /* Footer */
+        .footer-fixed {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #000;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9rem;
+            color: #666;
+            z-index: 50;
+            border-top: 1px solid #333;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #444; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold); 
+        }
+
+        .hidden-section {
+            display: none;
+        }
+
+        /* Cinematic Image Frame */
+        .cinematic-image-container {
+            position: relative;
+            border: 1px solid #333;
+            padding: 8px;
+            background: #111;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            /* Updated scaling logic */
+            max-width: 350px; 
+            margin: 0 auto;
+        }
+        .cinematic-image-container img {
+            display: block;
+            width: 100%;
+            height: auto;
+            filter: sepia(20%) contrast(110%);
+        }
+        .cinematic-image-container::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px; right: -1px; bottom: -1px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sound Effect Audio -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            if (type === 'hover') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'click') {
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'correct') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+                oscillator.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        // Global function for ordering question
+        window.moveItem = (cardId, idx, dir) => {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+            const arr = card.currentOrderList;
+            if (idx + dir < 0 || idx + dir >= arr.length) return;
+            // Swap
+            [arr[idx], arr[idx+dir]] = [arr[idx+dir], arr[idx]];
+            // Re-render
+            card.renderOrderFn();
+        };
+    </script>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-amber-500 font-bold text-xl cinematic-font tracking-widest uppercase">
+                <i class="fas fa-feather-alt mr-2"></i> Ұшқан ұя
+            </div>
+            <div class="flex space-x-8 oswald-font text-lg">
+                <button onclick="switchTab('home')" class="nav-btn active text-white hover:text-amber-400 transition-colors" id="btn-home">Бас бет</button>
+                <button onclick="switchTab('ted')" class="nav-btn text-white hover:text-amber-400 transition-colors" id="btn-ted">TED & талқы</button>
+                <button onclick="switchTab('test')" class="nav-btn text-white hover:text-amber-400 transition-colors" id="btn-test">Білім сынағы</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SECTION 1: HOME (HERO) -->
+    <section id="home" class="min-h-screen relative flex items-center justify-center pt-24 pb-20 bg-gradient-to-b from-black via-[#0d0d0d] to-[#111]">
+        
+        <div class="container mx-auto px-6 z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="animate-fade-in text-left">
+                <h2 class="text-amber-500 font-bold tracking-widest mb-2 oswald-font uppercase">Туынды</h2>
+                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 cinematic-font leading-tight">
+                    ҰШҚАН ҰЯ
+                </h1>
+                <p class="text-gray-300 text-lg md:text-xl leading-relaxed mb-8 border-l-4 border-amber-500 pl-6 italic">
+                    "Баяны жоқ ұл болма..."
+                </p>
+                <div class="bg-black/60 backdrop-blur-sm p-6 rounded-lg border border-gray-700 shadow-2xl">
+                    <h3 class="text-2xl text-amber-400 mb-4 cinematic-font">Тұлғалық болмыс</h3>
+                    <p class="text-gray-300 mb-4">
+                        Бұл туындыда батырдың балалық шағы ғана емес, оның қайтпас қайсар мінезінің, әділдікке құштарлығының қайнар көзі суреттеледі. 
+                        Атасы <strong>Имаш</strong> — 92 жасында дүние салған от жанарлы, орақ мұрынды қария болса, әкесі <strong>Момыш</strong> — ешкімге жалданып көрмеген, өз еңбегімен күн көрген, "Тура Момыш" атанған әділ жан.
+                    </p>
+                    <p class="text-gray-300">
+                        Әжесі <strong>Қызтумас</strong> пен анасы <strong>Рәзияның</strong> мейіріміне қанып өскен Бауыржанның бойына тектілік, өнерге құштарлық, сөзге шешендік және қарапайым еңбекқорлық бала жасынан дарыған. Бұл — ұлттық тәрбиенің, "ұшқан ұяның" жылуы.
+                    </p>
+                </div>
+                <button onclick="switchTab('ted')" class="mt-8 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-black font-bold rounded shadow-[0_0_15px_rgba(217,119,6,0.5)] transition-all oswald-font">
+                    <i class="fas fa-play mr-2"></i> Талқылауға өту
+                </button>
+            </div>
+            
+            <!-- Right Side Image Positioned Here -->
+            <div class="hidden md:block animate-fade-in delay-200">
+                <div class="cinematic-image-container transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                    <img src="https://s.f.kz/prod/2539/2538874_1000.jpg" alt="Бауыржан Момышұлы">
+                    <div class="mt-2 text-center text-amber-500 cinematic-font text-sm tracking-widest">Бауыржан Момышұлы</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticker -->
+        <div class="ticker-wrap">
+            <div class="ticker">
+                <div class="ticker__item">Алатаудың қыраны мол еді — Қырағы болсын, құлыным.</div>
+                <div class="ticker__item">Қойнауы суға мол еді — Бұлағы болсын, құлыным.</div>
+                <div class="ticker__item">Елінің тілегі зор еді — Шырағы болсын, құлыным.</div>
+                <div class="ticker__item">Ата тілегі оң еді — Құмары болсын, құлыным.</div>
+                <div class="ticker__item">Құрық деп берсем – құл болма.</div>
+                <div class="ticker__item">Шыбық деп берсем – шіл болма.</div>
+                <div class="ticker__item">Бәрінен де, шырағым, Баяны жоқ ұл болма!</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: TED / OPEN FIELD -->
+    <section id="ted" class="min-h-screen pt-24 pb-20 px-4 hidden-section bg-gradient-to-b from-[#0a0a0a] to-[#1a1a1a]">
+        <div class="container mx-auto">
+            <h2 class="text-4xl text-center text-amber-500 mb-12 cinematic-font uppercase tracking-widest">
+                <i class="fas fa-microphone-alt"></i> Ашық алаң - TED әңгімелері
+            </h2>
+            
+            <div class="panel-container" id="panelContainer">
+                <!-- Panel 1 -->
+                <div class="panel active" onclick="activatePanel(this)">
+                    <div class="panel-title oswald-font">АТА ӨСИЕТІ МЕН ТҰЛҒА</div>
+                    <div class="panel-content">
+                        <h3 class="text-2xl text-amber-400 mb-6 cinematic-font leading-relaxed">
+                            Ер адамның тұлға болып қалыптасуындағы ата өсиеті мен батаның рөлі қандай?
+                        </h3>
+                        <div class="bg-gray-800/50 p-6 border-l-4 border-amber-500 mb-6">
+                            <p class="text-xl italic font-serif">"Баяны жоқ ұл болма..."</p>
+                        </div>
+                        <p class="text-gray-300 text-lg mb-6">
+                            <strong>Өмірмен байланысы:</strong> Бұл сұрақ бүгінгі күні де өзекті. Заманауи тәрбиеде ұлттық код пен ата-баба дәстүрінің орны қандай? Ер баланың жауапкершілігі, сөзіне беріктігі және отбасындағы орны туралы талқылау.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Panel 2 -->
+                <div class="panel" onclick="activatePanel(this)">
+                    <div class="panel-title oswald-font">ПАРАСАТТЫЛЫҚ КҮШІ</div>
+                    <div class="panel-content">
+                        <h3 class="text-2xl text-amber-400 mb-6 cinematic-font leading-relaxed">
+                            Дау-дамайды шешетін парасаттылық пен кешірімнің күші неде?
+                        </h3>
+                        <div class="bg-gray-800/50 p-6 border-l-4 border-red-500 mb-6">
+                            <p class="text-xl italic font-serif">"Сенің балаңның айыбынан менің айыбым асып кетті..."</p>
+                        </div>
+                        <p class="text-gray-300 text-lg mb-4">
+                            <strong>Өмірмен байланысы:</strong> Текебай би мен Қабылбектің арасындағы жағдай қазіргі қоғамдағы конфликт менеджментінің үлгісі бола ала ма? Кешірім сұрау әлсіздік пе, әлде тектілік белгісі ме?
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Panel 3 -->
+                <div class="panel" onclick="activatePanel(this)">
+                    <div class="panel-title oswald-font">БЕДЕЛ МЕН КІСІЛІК</div>
+                    <div class="panel-content">
+                        <h3 class="text-2xl text-amber-400 mb-6 cinematic-font leading-relaxed">
+                            Адамның қоғамдағы беделі байлығымен өлшене ме, әлде кісілігімен бе?
+                        </h3>
+                        <div class="bg-gray-800/50 p-6 border-l-4 border-blue-500 mb-6">
+                            <p class="text-xl italic font-serif">"Бар байлығы жалғыз аттан артпапты... бірақ Тура Момыш атанды"</p>
+                        </div>
+                        <p class="text-gray-300 text-lg">
+                            <strong>Өмірмен байланысы:</strong> Қазіргі материалдық құндылықтар басым заманда рухани байлықтың салмағы қандай? Момыш секілді "кедей бірақ жомарт" болу бүгінгі күні мүмкін бе?
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Panel 4 -->
+                <div class="panel" onclick="activatePanel(this)">
+                    <div class="panel-title oswald-font">БІЛІМ ЖӘНЕ ҚОҒАМ</div>
+                    <div class="panel-content">
+                        <h3 class="text-2xl text-amber-400 mb-6 cinematic-font leading-relaxed">
+                            Білім мен сауаттылықты адам өз мүддесіне пайдалануы керек пе, әлде қоғам игілігіне ме?
+                        </h3>
+                        <div class="bg-gray-800/50 p-6 border-l-4 border-purple-500 mb-6">
+                            <p class="text-xl italic font-serif">"Мен жазып берсем, қайтесіз..."</p>
+                        </div>
+                        <p class="text-gray-300 text-lg">
+                            <strong>Өмірмен байланысы:</strong> Момыштың "Жарты" сөзін жазып беруі арқылы елге көмектесуі. Қазіргі зиялы қауымның қоғам алдындағы жауапкершілігі қандай болуы керек? Білімді жемқорлыққа емес, игілікке жұмсау мәселесі.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8 text-gray-500 text-sm">
+                *Панельдерді басып, толық мазмұнын ашыңыз. Дыбыстық сүйемелдеу қосылған.*
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: QUIZ -->
+    <section id="test" class="min-h-screen pt-24 pb-32 px-4 hidden-section bg-[#0f0f0f]">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl text-center text-amber-500 mb-4 cinematic-font uppercase">Білім сынағы</h2>
+            <div class="flex justify-between items-center mb-8 bg-gray-900 p-4 rounded border border-gray-700">
+                <div class="text-xl text-white oswald-font">Сұрақ: <span id="q-current" class="text-amber-500">1</span>/25</div>
+                <div class="text-xl text-white oswald-font">Ұпай: <span id="score-display" class="text-green-500">0</span></div>
+            </div>
+
+            <div id="quiz-container" class="space-y-8">
+                <!-- Questions will be injected here via JS -->
+            </div>
+
+            <div class="mt-12 text-center">
+                <button onclick="finishQuiz()" class="px-10 py-4 bg-green-700 hover:bg-green-600 text-white font-bold rounded shadow-lg text-xl uppercase oswald-font transition-transform transform hover:scale-105">
+                    Сынақты аяқтау
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Modal -->
+        <div id="result-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center">
+            <div class="bg-gray-900 border-2 border-amber-500 p-10 rounded-xl max-w-lg w-full text-center shadow-[0_0_50px_rgba(217,119,6,0.3)]">
+                <h3 class="text-4xl text-amber-500 mb-6 cinematic-font">Нәтиже</h3>
+                <div class="text-6xl text-white font-bold mb-4 oswald-font" id="final-score">0</div>
+                <p class="text-gray-300 mb-8" id="feedback-text">Жақсы!</p>
+                <button onclick="location.reload()" class="px-6 py-2 border border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-black transition-colors rounded">
+                    Қайта тапсыру
+                </button>
+                <button onclick="closeModal()" class="px-6 py-2 ml-4 border border-gray-500 text-gray-400 hover:text-white transition-colors rounded">
+                    Жабу
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-fixed oswald-font flex justify-center px-6">
+        <span>&copy; 2026 Қазақ әдебиеті пәні</span>
+    </footer>
+
+    <script>
+        // --- Navigation Logic ---
+        function switchTab(tabId) {
+            playSound('click');
+            // Hide all sections
+            document.querySelectorAll('section').forEach(sec => {
+                if(sec.id !== 'home' && sec.id !== 'ted' && sec.id !== 'test') return;
+                sec.classList.add('hidden-section');
+            });
+            
+            // Show selected section
+            const section = document.getElementById(tabId);
+            section.classList.remove('hidden-section');
+            section.classList.add('animate-fade-in');
+
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + tabId).classList.add('active');
+
+            // Reset animation
+            setTimeout(() => section.classList.remove('animate-fade-in'), 1000);
+        }
+
+        // --- Panel Logic ---
+        function activatePanel(element) {
+            playSound('click');
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // --- Quiz Data ---
+        const quizData = [
+            // 1-10: Single Choice
+            { type: 'single', q: "Имаш баба неше жасында дүние салған?", options: ["85", "92", "100", "78"], a: 1 },
+            { type: 'single', q: "Әкесі Момыштың лақап аты қандай болған?", options: ["Сары шал", "Қара қатпа (Тарамыс)", "Ақсақ Момыш", "Бай Момыш"], a: 1 },
+            { type: 'single', q: "Бауыржан Момышұлы қай күні дүниеге келген?", options: ["24 желтоқсан", "1 қаңтар", "25 қазан", "9 мамыр"], a: 0 },
+            { type: 'single', q: "Әжесі Қызтумасты қартайғанда жұрт қалай атаған?", options: ["Дана кемпір", "Сары кемпір", "Бәйбіше", "Қара кемпір"], a: 1 },
+            { type: 'single', q: "Момыштың алғашқы әйелі, Бауыржанның анасы кім?", options: ["Қызтумас", "Бибігүл", "Рәзия", "Зере"], a: 2 },
+            { type: 'single', q: "Момыш неше жасында үйленді?", options: ["20", "25", "33", "40"], a: 2 },
+            { type: 'single', q: "Момыш әкесі неше жыл старшын болды?", options: ["5 жыл", "10 жыл", "17 жыл", "2 жыл"], a: 2 },
+            { type: 'single', q: "Текебай би қай рудың атынан шыққан?", options: ["Жаңабай", "Байтана", "Шымыр", "Жаныс"], a: 1 },
+            { type: 'single', q: "Байзақ датқаның баласы кім?", options: ["Серкебай", "Қабылбек", "Ереш", "Момынқұл"], a: 1 },
+            { type: 'single', q: "Бауыржан туылғанда әкесі қай қалада болды?", options: ["Шымкент", "Ташкент", "Әулиеата", "Түркістан"], a: 2 },
+
+            // 11-13: Multiple Choice
+            { type: 'multi', q: "Момыштың бойындағы өнерлері (екі дұрыс жауап):", options: ["Зергерлік", "Ағаш ұстасы", "Саятшылық", "Күйшілік"], a: [0, 1] },
+            { type: 'multi', q: "Рәзиядан кейінгі қыздардың есімдері (үш дұрыс жауап):", options: ["Үбіш", "Сәлима", "Ботагөз", "Әлима"], a: [0, 1, 3] },
+            { type: 'multi', q: "Батада айтылған тілектер (екі дұрыс жауап):", options: ["Қырағы болсын", "Бай болсын", "Шырағы болсын", "Көсем болсын"], a: [0, 2] },
+            
+            // 14-18: True / False
+            { type: 'tf', q: "Момыш орысша хат танымайтын, мүлдем сауатсыз адам болған.", a: false }, 
+            { type: 'tf', q: "Серкебай Қабылбек болысты балағаттағаны үшін әкесінен мақтау естіді.", a: false }, 
+            { type: 'tf', q: "Имаш баба немересіне 'Баяны жоқ ұл болма' деп бата берді.", a: true },
+            { type: 'tf', q: "Текебай мен Қабылбек ақыры жауласып өлді.", a: false }, 
+            { type: 'tf', q: "Бауыржанның анасы Рәзия ол 3 жасқа толмай қайтыс болды.", a: true },
+
+            // 19 (Index 18): Ordering
+            { type: 'order', q: "Оқиғаларды ретімен орналастырыңыз:", options: ["Момыштың 'Жарты' сөзін жазып беруі", "Серкебайдың дауы", "Имаш бабаның қайтыс болуы (естелік басы)", "Бауыржанның туылуы"], order: [2, 3, 0, 1] }, 
+            
+            // 20 (Index 19): Ordering
+            { type: 'order', q: "Адам өмірінің кезеңдерін ретімен қойыңыз (Мәтін желісімен):", options: ["Имаш бабаның батасы", "Бауыржанның туылуы", "Әкесінің 33 жасқа дейін сүрбойдақ жүруі", "Түнгі түйелер елесі"], order: [2, 1, 0, 3] },
+
+            // 21 (Index 20): Matching
+            { type: 'match', q: "Тұлға мен сипаттаманы сәйкестендіріңіз:", pairs: { "Момыш": "Қара қатпа", "Қызтумас": "Сары кемпір", "Серкебай": "Сотқар", "Қабылбек": "Болыс" } },
+            
+            // 22-25: Fillers
+            { type: 'single', q: "Момышты 'Қара құл' деп кім атаған?", options: ["Рәзия", "Қызтумас", "Имаш", "Текебай"], a: 1 },
+            { type: 'single', q: "Серкебай Қабылбектің ауылына неше жігітпен барды?", options: ["5", "10", "20", "Жалғыз"], a: 1 },
+            { type: 'single', q: "Момыш сайлау алдында қандай сөзді жазып беріп абыройы өсті?", options: ["Болыс", "Жарты", "Сайлау", "Ояз"], a: 1 },
+            { type: 'tf', q: "Бауыржан Кавказда жүргенде балалық шағын еске алды.", a: true }
+        ];
+
+        let score = 0;
+        const quizContainer = document.getElementById('quiz-container');
+
+        // --- Render Quiz ---
+        function renderQuiz() {
+            quizContainer.innerHTML = '';
+            quizData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'quiz-card p-6 rounded-lg relative overflow-hidden';
+                // Assign ID immediately
+                card.id = `q-card-${index}`;
+
+                card.innerHTML = `<div class="absolute top-0 left-0 bg-amber-600 text-black font-bold px-3 py-1 text-sm oswald-font">#${index + 1}</div>`;
+
+                const title = document.createElement('h3');
+                title.className = 'text-xl text-white mb-4 mt-4 font-serif';
+                title.innerText = item.q;
+                card.appendChild(title);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'grid gap-3';
+
+                // Render based on type
+                if (item.type === 'single') {
+                    item.options.forEach((opt, i) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'option-btn w-full text-left p-3 rounded border border-gray-600 text-gray-300';
+                        btn.innerText = opt;
+                        btn.onclick = () => checkSingle(btn, i, item.a, card);
+                        optionsDiv.appendChild(btn);
+                    });
+                } else if (item.type === 'tf') {
+                    ['Ақиқат', 'Жалған'].forEach((opt, i) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'option-btn w-full text-left p-3 rounded border border-gray-600 text-gray-300';
+                        btn.innerText = opt;
+                        const isTrue = i === 0;
+                        btn.onclick = () => checkSingle(btn, isTrue, item.a, card);
+                        optionsDiv.appendChild(btn);
+                    });
+                } else if (item.type === 'multi') {
+                    // Checkbox style
+                    item.options.forEach((opt, i) => {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'flex items-center space-x-3 p-2 border border-gray-700 rounded hover:bg-white/5 cursor-pointer';
+                        const chk = document.createElement('input');
+                        chk.type = 'checkbox';
+                        chk.className = 'w-5 h-5 accent-amber-600';
+                        chk.value = i;
+                        wrapper.onclick = (e) => { if(e.target !== chk) chk.checked = !chk.checked; };
+                        wrapper.innerHTML += `<span>${opt}</span>`;
+                        wrapper.prepend(chk);
+                        optionsDiv.appendChild(wrapper);
+                    });
+                    const confirmBtn = document.createElement('button');
+                    confirmBtn.className = 'mt-3 bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600';
+                    confirmBtn.innerText = "Жауапты тексеру";
+                    confirmBtn.onclick = () => checkMulti(card, item.a);
+                    optionsDiv.appendChild(confirmBtn);
+                } else if (item.type === 'match') {
+                    const keys = Object.keys(item.pairs);
+                    // Shuffle values
+                    const values = Object.values(item.pairs).sort(() => Math.random() - 0.5);
+
+                    optionsDiv.innerHTML = ''; 
+                    keys.forEach(k => {
+                        const row = document.createElement('div');
+                        row.className = 'flex justify-between items-center mb-2';
+                        row.innerHTML = `<span class="w-1/3 text-amber-400 text-sm md:text-base">${k}</span>`;
+                        
+                        const select = document.createElement('select');
+                        select.className = 'w-2/3 bg-gray-800 p-2 rounded match-select text-white border border-gray-600';
+                        select.innerHTML = '<option value="">Таңдаңыз...</option>';
+                        values.forEach(v => {
+                            select.innerHTML += `<option value="${v}">${v}</option>`;
+                        });
+                        row.appendChild(select);
+                        optionsDiv.appendChild(row);
+                    });
+
+                    const confirmBtn = document.createElement('button');
+                    confirmBtn.className = 'mt-3 bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 w-full';
+                    confirmBtn.innerText = "Тексеру";
+                    confirmBtn.onclick = () => checkMatch(card, item.pairs);
+                    optionsDiv.appendChild(confirmBtn);
+                } else if (item.type === 'order') {
+                    const list = document.createElement('ul');
+                    // Randomize options initially
+                    let currentOrder = [...item.options].sort(() => Math.random() - 0.5);
+                    
+                    // Attach simplified ordering logic to the card element for access
+                    card.currentOrderList = currentOrder;
+                    
+                    card.renderOrderFn = function() {
+                        list.innerHTML = '';
+                        card.currentOrderList.forEach((opt, idx) => {
+                            const li = document.createElement('li');
+                            li.className = 'flex justify-between items-center bg-gray-800 p-2 mb-2 rounded border border-gray-600';
+                            li.innerHTML = `<span class="flex-1 mr-2 text-sm md:text-base">${opt}</span> 
+                            <div class="flex-shrink-0">
+                                <button class="text-amber-500 px-2 py-1 hover:bg-white/10 rounded" onclick="moveItem('${card.id}', ${idx}, -1)">↑</button>
+                                <button class="text-amber-500 px-2 py-1 hover:bg-white/10 rounded" onclick="moveItem('${card.id}', ${idx}, 1)">↓</button>
+                            </div>`;
+                            list.appendChild(li);
+                        });
+                    };
+                    
+                    card.renderOrderFn();
+                    
+                    optionsDiv.appendChild(list);
+                    const confirmBtn = document.createElement('button');
+                    confirmBtn.className = 'mt-3 bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600';
+                    confirmBtn.innerText = "Тексеру";
+                    confirmBtn.onclick = () => checkOrder(card, item.order, item.options);
+                    optionsDiv.appendChild(confirmBtn);
+                }
+
+                card.appendChild(optionsDiv);
+                quizContainer.appendChild(card);
+            });
+        }
+
+        // --- Checking Logic ---
+        function updateScore(points) {
+            score += points;
+            document.getElementById('score-display').innerText = score;
+        }
+
+        function disableCard(card) {
+            const btns = card.querySelectorAll('button, input, select');
+            btns.forEach(b => b.disabled = true);
+        }
+
+        function checkSingle(btn, chosenIndex, correctIndex, card) {
+            if (card.classList.contains('answered')) return;
+            card.classList.add('answered');
+
+            let isCorrect = false;
+            if (typeof correctIndex === 'boolean') {
+                isCorrect = chosenIndex === correctIndex;
+            } else {
+                isCorrect = chosenIndex === correctIndex;
+            }
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                playSound('correct');
+                updateScore(1);
+            } else {
+                btn.classList.add('incorrect');
+                playSound('wrong');
+                const allBtns = card.querySelectorAll('.option-btn');
+                 if (typeof correctIndex === 'number') {
+                    allBtns[correctIndex].classList.add('correct');
+                 }
+            }
+            disableCard(card);
+        }
+
+        function checkMulti(card, correctIndices) {
+            if (card.classList.contains('answered')) return;
+            card.classList.add('answered');
+            
+            const inputs = card.querySelectorAll('input[type="checkbox"]');
+            let allCorrect = true;
+            let selectedCount = 0;
+
+            inputs.forEach((input, idx) => {
+                const isChecked = input.checked;
+                const isCorrect = correctIndices.includes(idx);
+                
+                if (isChecked) selectedCount++;
+
+                if (isChecked && !isCorrect) {
+                    input.parentElement.classList.add('incorrect');
+                    allCorrect = false;
+                } else if (!isChecked && isCorrect) {
+                    input.parentElement.classList.add('text-green-500'); 
+                    allCorrect = false;
+                } else if (isChecked && isCorrect) {
+                    input.parentElement.classList.add('correct');
+                }
+            });
+
+            if (allCorrect && selectedCount === correctIndices.length) {
+                playSound('correct');
+                updateScore(1);
+            } else {
+                playSound('wrong');
+            }
+            disableCard(card);
+        }
+
+        function checkMatch(card, pairs) {
+            if (card.classList.contains('answered')) return;
+            card.classList.add('answered');
+
+            const selects = card.querySelectorAll('select');
+            const spans = card.querySelectorAll('span.text-amber-400');
+            let correctCount = 0;
+            const total = Object.keys(pairs).length;
+
+            spans.forEach((span, idx) => {
+                const key = span.innerText;
+                const val = selects[idx].value;
+                if (pairs[key] === val) {
+                    selects[idx].classList.add('correct');
+                    correctCount++;
+                } else {
+                    selects[idx].classList.add('incorrect');
+                }
+            });
+
+            if (correctCount === total) {
+                playSound('correct');
+                updateScore(1);
+            } else {
+                playSound('wrong');
+            }
+            disableCard(card);
+        }
+
+        function checkOrder(card, correctOrderIndices, originalOptions) {
+            if (card.classList.contains('answered')) return;
+            card.classList.add('answered');
+
+            const correctStringArr = correctOrderIndices.map(i => originalOptions[i]);
+            const userOrder = card.currentOrderList;
+            const isMatch = JSON.stringify(userOrder) === JSON.stringify(correctStringArr);
+
+            if (isMatch) {
+                card.querySelector('ul').classList.add('border', 'border-green-500');
+                playSound('correct');
+                updateScore(1);
+            } else {
+                card.querySelector('ul').classList.add('border', 'border-red-500');
+                playSound('wrong');
+            }
+            disableCard(card);
+        }
+
+        function finishQuiz() {
+            const modal = document.getElementById('result-modal');
+            const finalScore = document.getElementById('final-score');
+            const feedback = document.getElementById('feedback-text');
+            
+            finalScore.innerText = score + "/25";
+            
+            if (score === 25) feedback.innerText = "Керемет! Сіз нағыз Бауыржантанушысыз!";
+            else if (score > 20) feedback.innerText = "Өте жақсы нәтиже!";
+            else if (score > 10) feedback.innerText = "Жаман емес, бірақ шығарманы қайта оқу керек.";
+            else feedback.innerText = "Шығарманы мұқият оқып шығыңыз.";
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').classList.add('hidden');
+        }
+
+        // Init
+        renderQuiz();
+
+    </script>
+</body>
+</html>
